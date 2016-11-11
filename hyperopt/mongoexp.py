@@ -96,9 +96,9 @@ __contact__ = "github.com/hyperopt/hyperopt"
 
 import copy
 try:
-    import dill as cPickle
+    import dill as pickle
 except ImportError:
-    import cPickle
+    import pickle
 import hashlib
 import logging
 import optparse
@@ -744,7 +744,7 @@ class MongoTrials(Trials):
                                       str(numpy.random.randint(1e8)) + '.pkl')
                     logger.error('HYPEROPT REFRESH ERROR: writing error file to %s' % reportpath)
                     _file = open(reportpath, 'w')
-                    cPickle.dump({'db_data': db_data,
+                    pickle.dump({'db_data': db_data,
                                   'existing_data': existing_data},
                                 _file)
                     _file.close()
@@ -1041,9 +1041,9 @@ class MongoWorker(object):
             cmd_protocol = cmd[0]
             try:
                 if cmd_protocol == 'cpickled fn':
-                    worker_fn = cPickle.loads(cmd[1])
+                    worker_fn = pickle.loads(cmd[1])
                 elif cmd_protocol == 'call evaluate':
-                    bandit = cPickle.loads(cmd[1])
+                    bandit = pickle.loads(cmd[1])
                     worker_fn = bandit.evaluate
                 elif cmd_protocol == 'token_load':
                     cmd_toks = cmd[1].split('.')
@@ -1055,14 +1055,14 @@ class MongoWorker(object):
                 elif cmd_protocol == 'driver_attachment':
                     #name = 'driver_attachment_%s' % job['exp_key']
                     blob = ctrl.trials.attachments[cmd[1]]
-                    bandit_name, bandit_args, bandit_kwargs = cPickle.loads(blob)
+                    bandit_name, bandit_args, bandit_kwargs = pickle.loads(blob)
                     worker_fn = json_call(bandit_name,
                             args=bandit_args,
                             kwargs=bandit_kwargs).evaluate
                 elif cmd_protocol == 'domain_attachment':
                     blob = ctrl.trials.attachments[cmd[1]]
                     try:
-                        domain = cPickle.loads(blob)
+                        domain = pickle.loads(blob)
                     except BaseException, e:
                         logger.info('Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.')
                         raise
