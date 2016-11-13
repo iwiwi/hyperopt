@@ -5,4 +5,6 @@ import logging
 logging.basicConfig(
         stream=sys.stderr,
         level=logging.INFO)
-sys.exit(hyperopt.mongoexp.main_worker())
+
+while True:
+    hyperopt.mongoexp.main_worker()
